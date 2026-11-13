@@ -56,10 +56,35 @@ Google Business Profile has no "download reviews" button, and the Places API onl
 
 ## 📥 Install (30 seconds)
 
-1. Grab or clone this repo.
+**Option A — Release zip (recommended):**
+1. Grab the latest release from the [Releases page](../../releases) (`google-maps-reviews-exporter-vX.Y.Z.zip`).
+2. Extract the zip.
+3. Open `chrome://extensions` and enable **Developer mode**.
+4. Click **Load unpacked** and select the extracted folder.
+5. Open a place on Google Maps → click the icon → export. 🎉
+
+**Option B — from source:**
+1. Clone this repo.
 2. Open `chrome://extensions` and enable **Developer mode**.
 3. Click **Load unpacked** and pick this folder.
-4. Open a place on Google Maps → click the icon → export. 🎉
+
+---
+
+## 🚀 Cutting a release (maintainers)
+
+Every push of a `v*` tag triggers the [release workflow](.github/workflows/release.yml):
+
+1. **Test** — full suite (CSV, Excel, e2e, manifest).
+2. **Build** — packages a clean extension zip (extension files only, no tests).
+3. **Release** — publishes a GitHub Release with the zip attached.
+
+```bash
+# bump version in manifest.json first, then:
+git add manifest.json
+git commit -m "Release v0.2.2"
+git tag v0.2.2
+git push origin main --tags
+```
 
 ---
 

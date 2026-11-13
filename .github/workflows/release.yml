@@ -1,0 +1,140 @@
+name: Release Chrome Extension
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    name: Run test suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: JS syntax check
+        run: |
+          node --check popup.js
+          node --check background.js
+
+      - name: Unit tests (CSV, dates, RFC4180)
+        run: node tests/test_csv.js
+
+      - name: Excel builder test
+        run: node tests/test_xlsx.js
+
+      - name: End-to-end pipeline test
+        run: node tests/test_e2e.js
+
+      - name: Manifest v3 compliance
+        run: python3 tests/check_manifest.py
+
+  build:
+    name: Build extension zip
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Read version from manifest
+        id: version
+        run: echo "version=$(node -p "require('./manifest.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Package extension
+        run: |
+          # Files/folders to include in the extension package
+          STAGE=$(mktemp -d)
+          mkdir -p "$STAGE/google-maps-reviews-exporter"
+          cp manifest.json popup.html popup.js background.js xlsx.full.min.js "$STAGE/google-maps-reviews-exporter/"
+          cp -r icons "$STAGE/google-maps-reviews-exporter/icons"
+          cd "$STAGE"
+          zip -r "$GITHUB_WORKSPACE/google-maps-reviews-exporter-v${{ steps.version.outputs.version }}.zip" google-maps-reviews-exporter
+          cd "$GITHUB_WORKSPACE"
+          # Also produce an unzipped folder artifact name for convenience
+          echo "Artifact: google-maps-reviews-exporter-v${{ steps.version.outputs.version }}.zip"
+          unzip -l "google-maps-reviews-exporter-v${{ steps.version.outputs.version }}.zip"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: google-maps-reviews-exporter-v${{ steps.version.outputs.version }}
+          path: google-maps-reviews-exporter-v${{ steps.version.outputs.version }}.zip
+          if-no-files-found: error
+
+      - name: Save zip path for release job
+        run: echo "ZIP_FILE=google-maps-reviews-exporter-v${{ steps.version.outputs.version }}.zip" >> "$GITHUB_ENV"
+
+      - name: Upload zip for release job
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-zip
+          path: ${{ env.ZIP_FILE }}
+          if-no-files-found: error
+
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Read version from manifest
+        id: version
+        run: echo "version=$(node -p "require('./manifest.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Download zip
+        uses: actions/download-artifact@v4
+        with:
+          name: release-zip
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: v${{ steps.version.outputs.version }}
+          files: |
+            google-maps-reviews-exporter-v${{ steps.version.outputs.version }}.zip
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+          body: |
+            ## 📦 Google Maps Reviews Exporter v${{ steps.version.outputs.version }}
+
+            **Unlimited** Google Maps review export to CSV & Excel — no subscription, no caps.
+
+            ### Install
+            1. Download `google-maps-reviews-exporter-v${{ steps.version.outputs.version }}.zip`
+            2. Extract the zip
+            3. Open `chrome://extensions`, enable **Developer mode**
+            4. Click **Load unpacked** and select the extracted folder
+            5. Open any business on Google Maps → click the extension → Export
+
+            ### What's new
+            See the [commit history](https://github.com/zealish/${{ github.event.repository.name }}/commits/main) for details.
+
+            Not affiliated with or endorsed by Google. Google Maps is a trademark of Google LLC.

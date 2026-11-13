@@ -5,7 +5,7 @@ const dir = require('path').join(__dirname, '..');
 const XLSX = require(path.join(dir, 'xlsx.full.min.js'));
 
 const fixture = JSON.parse(
-  fs.readFileSync('/home/zealish/.hermes/profiles/kunyuk/cache/scratch/fixture_reviews.json', 'utf8')
+  fs.readFileSync(require('path').join(__dirname, 'fixtures', 'reviews.json'), 'utf8')
 );
 const reviews = fixture.reviews;
 const place = fixture.place;
