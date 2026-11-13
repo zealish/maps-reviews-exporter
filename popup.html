@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    width: 360px;
+    margin: 0;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 13px;
+    background: #fff;
+    color: #202124;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #202124; color: #e8eaed; }
+    .card { background: #292a2d !important; border-color: #3c4043 !important; }
+    .row { border-color: #3c4043 !important; }
+    input, select { background: #303134 !important; color: #e8eaed !important; border-color: #5f6368 !important; }
+    .muted { color: #9aa0a6 !important; }
+    h1 { color: #e8eaed !important; }
+  }
+  header {
+    padding: 14px 16px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #e8eaed;
+  }
+  header img { width: 24px; height: 24px; }
+  h1 { font-size: 14px; font-weight: 600; margin: 0; line-height: 1.3; }
+  .sub { font-size: 11px; color: #5f6368; margin-top: 2px; }
+  .content { padding: 14px 16px 16px; }
+  .place {
+    background: #f8f9fa;
+    border: 1px solid #e8eaed;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+  }
+  @media (prefers-color-scheme: dark) { .place { background: #292a2d; border-color: #3c4043; } }
+  .place .name { font-weight: 600; font-size: 13px; word-break: break-word; }
+  .place .meta { font-size: 11px; color: #5f6368; margin-top: 3px; }
+  .row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #eee; }
+  .row:last-of-type { border-bottom: none; }
+  .row label { font-size: 12.5px; }
+  .hint { font-size: 10.5px; color: #80868b; margin-top: 2px; }
+  select, input[type="number"] {
+    width: 96px;
+    padding: 5px 6px;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    font-size: 12px;
+    background: #fff;
+  }
+  .btns { display: flex; gap: 8px; margin-top: 14px; }
+  button {
+    flex: 1;
+    padding: 10px 8px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter .15s, opacity .15s;
+  }
+  button:hover { filter: brightness(0.95); }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-csv { background: #1a73e8; color: #fff; }
+  .btn-xls { background: #0f9d58; color: #fff; }
+  .btn-stop { background: #d93025; color: #fff; margin-top: 8px; display: none; }
+  .status {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #e8f0fe;
+    font-size: 12px;
+    line-height: 1.5;
+    display: none;
+    word-break: break-word;
+  }
+  @media (prefers-color-scheme: dark) { .status { background: #174ea6; } }
+  .status.error { background: #fce8e6; color: #c5221f; }
+  @media (prefers-color-scheme: dark) { .status.error { background: #5c1b17; color: #f28b82; } }
+  .status.ok { background: #e6f4ea; color: #137333; }
+  @media (prefers-color-scheme: dark) { .status.ok { background: #0d652d; color: #81c995; } }
+  .bar { height: 5px; background: #e8eaed; border-radius: 3px; overflow: hidden; margin-top: 8px; display: none; }
+  .bar > div { height: 100%; width: 0%; background: #1a73e8; transition: width .3s; }
+  .muted { color: #5f6368; }
+  footer { margin-top: 14px; font-size: 10px; color: #9aa0a6; text-align: center; line-height: 1.5; }
+</style>
+</head>
+<body>
+<header>
+  <img src="icons/icon48.png" alt="" />
+  <div>
+    <h1>Maps Reviews Exporter</h1>
+    <div class="sub">CSV &amp; Excel · runs locally · no limits</div>
+  </div>
+</header>
+
+<div class="content">
+  <div class="place" id="placeBox">
+    <div class="name" id="placeName">Detecting place…</div>
+    <div class="meta" id="placeMeta">Open a business on Google Maps first.</div>
+  </div>
+
+  <div class="row">
+    <div>
+      <label>Max reviews</label>
+      <div class="hint">0 = export every review found</div>
+    </div>
+    <input type="number" id="maxReviews" min="0" step="25" value="0" />
+  </div>
+
+  <div class="row">
+    <div>
+      <label>Scroll delay</label>
+      <div class="hint">Gentle pace, ms between scrolls</div>
+    </div>
+    <select id="delay">
+      <option value="700">700 (fast)</option>
+      <option value="1200" selected>1200 (normal)</option>
+      <option value="2000">2000 (gentle)</option>
+      <option value="3000">3000 (very gentle)</option>
+    </select>
+  </div>
+
+  <div class="row">
+    <div>
+      <label>Include photos count</label>
+      <div class="hint">Number of photos per review</div>
+    </div>
+    <select id="withPhotos">
+      <option value="1" selected>Yes</option>
+      <option value="0">No</option>
+    </select>
+  </div>
+
+  <div class="btns">
+    <button class="btn-csv" id="btnCsv">Export CSV</button>
+    <button class="btn-xls" id="btnXls">Export Excel</button>
+  </div>
+  <button class="btn-stop" id="btnStop">■ Stop</button>
+
+  <div class="status" id="status"></div>
+  <div class="bar" id="bar"><div id="barFill"></div></div>
+
+  <footer>
+    Everything runs inside your browser. Reviews never leave your machine.<br/>
+    Not affiliated with or endorsed by Google.
+  </footer>
+</div>
+
+<script src="xlsx.full.min.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>
