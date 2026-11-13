@@ -1,5 +1,5 @@
 import json, os
-d = "/home/zealish/Tools/MAPS_REVIEWS_EXPORTER"
+d = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 m = json.load(open(os.path.join(d, "manifest.json")))
 errs = []
 for k in ["manifest_version", "name", "version"]:
