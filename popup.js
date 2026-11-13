@@ -1,5 +1,5 @@
 /**
- * Google Maps Reviews Exporter — popup controller & content-script payload.
+ * Maps Reviews Exporter — popup controller & content-script payload.
  * Runs 100% locally. No analytics, no network calls outside the Maps page.
  */
 

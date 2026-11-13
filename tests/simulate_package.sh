@@ -7,7 +7,7 @@ STAGE=$(mktemp -d)
 trap 'rm -rf "$STAGE"' EXIT
 
 VERSION=$(node -p "require('./manifest.json').version")
-NAME="google-maps-reviews-exporter"
+NAME="maps-reviews-exporter"
 mkdir -p "$STAGE/$NAME"
 cp manifest.json popup.html popup.js background.js xlsx.full.min.js "$STAGE/$NAME/"
 cp -r icons "$STAGE/$NAME/icons"

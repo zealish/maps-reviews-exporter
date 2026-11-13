@@ -1,4 +1,4 @@
-# 🔧 Developer Guide — Google Maps Reviews Exporter
+# 🔧 Developer Guide — Maps Reviews Exporter
 
 Technical notes for contributors and anyone debugging selector breakage.
 

@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Google Maps Reviews Exporter: Export Reviews to CSV & Excel",
+  "name": "Maps Reviews Exporter: Unlimited CSV & Excel Export",
   "short_name": "Maps Reviews Exporter",
   "version": "0.2.1",
   "description": "Export Google Maps reviews from the place you have open to CSV or Excel. Stars, text, dates, owner replies and photos. Runs locally in your browser, no login, no limits.",
@@ -17,8 +17,15 @@
       "128": "icons/icon128.png"
     }
   },
-  "permissions": ["activeTab", "scripting", "downloads"],
-  "host_permissions": ["https://www.google.com/*", "https://maps.google.com/*"],
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://www.google.com/*",
+    "https://maps.google.com/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },
