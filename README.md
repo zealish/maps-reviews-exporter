@@ -1,6 +1,12 @@
 # 📍 Google Maps Reviews Exporter
 
+[![Latest Release](https://img.shields.io/github/v/release/zealish/google-maps-reviews-exporter?style=flat-square&label=download)](https://github.com/zealish/google-maps-reviews-exporter/releases/latest)
+[![CI](https://img.shields.io/github/actions/workflow/status/zealish/google-maps-reviews-exporter/release.yml?style=flat-square&label=tests%20%26%20build)](https://github.com/zealish/google-maps-reviews-exporter/actions/workflows/release.yml)
+
 **Turn any Google Maps place page into a clean CSV or Excel file — in one click.**
+
+> ### [⬇️ Download the latest release](https://github.com/zealish/google-maps-reviews-exporter/releases/latest)
+> Extract the zip → `chrome://extensions` → Developer mode → **Load unpacked** → done.
 
 Google Business Profile has no "download reviews" button, and the Places API only hands you 5 reviews per place. This extension unlocks **all of them** — stars, full text, dates, owner replies, photos and more — straight from the page you're already looking at.
 
@@ -57,11 +63,13 @@ Google Business Profile has no "download reviews" button, and the Places API onl
 ## 📥 Install (30 seconds)
 
 **Option A — Release zip (recommended):**
-1. Grab the latest release from the [Releases page](../../releases) (`google-maps-reviews-exporter-vX.Y.Z.zip`).
+1. **[⬇️ Download the latest release](https://github.com/zealish/google-maps-reviews-exporter/releases/latest)** — grab `google-maps-reviews-exporter-vX.Y.Z.zip`.
 2. Extract the zip.
 3. Open `chrome://extensions` and enable **Developer mode**.
 4. Click **Load unpacked** and select the extracted folder.
 5. Open a place on Google Maps → click the icon → export. 🎉
+
+> 📌 **Always get the newest build from the [Releases page](https://github.com/zealish/google-maps-reviews-exporter/releases)** — every tagged version is automatically tested, packaged, and published there.
 
 **Option B — from source:**
 1. Clone this repo.
