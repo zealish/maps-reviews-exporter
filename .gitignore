@@ -13,3 +13,6 @@ tests/*.xlsx
 .vscode/
 .idea/
 *.swp
+
+# any xlsx artifacts
+*.xlsx
